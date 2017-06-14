@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="ampm365m">
+    <meta name="description" content="ampm365m">
+    <title>ampm365m</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+  <script>
+    // font 适配
+    var rem,window_w;
+    function resetREM(){
+        window_w = window.innerWidth;
+        rem = window_w / 750 * 100;
+        document.getElementsByTagName('html')[0].style.fontSize = rem + 'px';
+    }
+    resetREM();
+    window.onresize = resetREM;
+  </script>
+</html>
