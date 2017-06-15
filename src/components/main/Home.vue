@@ -4,31 +4,15 @@
     <mu-text-field icon="search" class="appbar-search-field"  slot="right" hintText="请输入搜索内容"/>
     <mu-flat-button color="white" label="go" slot="right"/>
   </mu-appbar>
-  <mu-paper class="navbar">
-    <mu-bottom-nav :value="bottomNav" shift @change="handleChange">
-      <mu-bottom-nav-item value="movies" title="Movies" icon="ondemand_video"/>
-      <mu-bottom-nav-item value="music" title="Music" icon="music_note"/>
-      <mu-bottom-nav-item value="books" title="Books" icon="books"/>
-      <mu-bottom-nav-item value="pictures" title="Pictures" icon="photo"/>
-    </mu-bottom-nav>
-  </mu-paper>
-
 </div>
 </template>
 
 <script>
 export default {
   data () {
-    return {
-      bottomNav: 'movies',
-      bottomNavColor: 'movies'
-    }
+    return {}
   },
-  methods: {
-    handleChange (val) {
-      this.bottomNav = val
-    }
-  }
+  methods: {}
 }
 </script>
 
