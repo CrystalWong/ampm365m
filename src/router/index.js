@@ -20,9 +20,9 @@ export default new Router({
     path: '/coupon',
     name: 'coupon',
     components: {
-      default: Home,
-      main: Coupon,
-      menubar: Menubar
+      default: Coupon
+      // main: Coupon,
+      // menubar: Menubar
     }
   },
   {
