@@ -1,41 +1,60 @@
 <template>
-  <div class="coupon">
+  <div id="coupon" class="set-bg">
     <img src="../../assets/imgs/promotions/coupons/coupon0630/top.png" width="100%">
-    <div class="mobile-wrap">
-      <input type="tel" name="mobile" class="mobile" width="90%">
+    <input type="tel" name="mobile" class="set-bg outer-bg mobile" placeholder="输入手机号">
+    <div class="captcha-wrap">
+      <input type="text" name="captcha" class="set-bg outer-bg captcha fl" placeholder="输入验证码">
+      <div class="set-bg outer-bg captcha-get fr">{{ captchaTxt }}</div>
     </div>
-    
   </div>
 </template>
 
 <script>
 export default {
   data () {
-    return {}
+    return {
+      'captchaTxt': '获取验证码'
+    }
   },
   methods: {}
 }
 </script>
 
 <style lang="less" scoped>
-.coupon {
-  background: -webkit-linear-gradient(#fcf7cd, #fff4bd); /* Safari 5.1 - 6.0 */
-  background: -o-linear-gradient(#fcf7cd, #fff4bd); /* Opera 11.1 - 12.0 */
-  background: -moz-linear-gradient(#fcf7cd, #fff4bd); /* Firefox 3.6 - 15 */
-  background: linear-gradient(#fcf7cd, #fff4bd); /* 标准的语法（必须放在最后） */
+#coupon {
+  background-image: url('../../assets/imgs/promotions/coupons/coupon0630/bg.png');
   text-align: center;
-  .mobile {
-    width: 80%;
-    height: 45px;
-    line-height: 45px;
-    background-image: url('../../assets/imgs/promotions/coupons/coupon0630/inputfir.png');
+  .set-bg {
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    margin: 5% auto;
-    padding: 10px 20px;
     background-color: transparent;
     border: none;
   }
+  .outer-bg {
+    height: 45px;
+    line-height: 45px;
+    padding: 10px 20px;
+  }
+  .captcha-wrap {
+    width: 80%;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+  .mobile {
+    width: 80%;
+    margin: 5% auto;
+    background-image: url('../../assets/imgs/promotions/coupons/coupon0630/inputfir.png');
+  }
+  .captcha {
+    width: 55%;
+    background-image: url('../../assets/imgs/promotions/coupons/coupon0630/inputsec.png');
+  }
+  .captcha-get {
+    width: 40%;
+    padding: 0;
+    background-image: url('../../assets/imgs/promotions/coupons/coupon0630/captcha.png');
+  }
+
   
 }
 </style>
