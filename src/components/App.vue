@@ -14,6 +14,7 @@ export default {
 }
 </script>
 <style src="@/assets/style/common.less" lang="less"></style>
+<style src="@/assets/style/reset.less" lang="less"></style>
 <style lang="less">
 #app {
   text-align: center;
