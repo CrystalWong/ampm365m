@@ -13,7 +13,7 @@
       <img src="../../assets/imgs/promotions/coupons/coupon0630/top2.png" width="100%">
       <div class="item-wrap set-bg outer-bg get-coupon" @click="toggle">我要领赠品</div>
     </div>
-    <div class="item-wrap hint"><small>该手机号已经被绑定，请更换手机号后重试</small></div>
+    <div class="item-wrap hint"><small>{{ message }}</small></div>
     <img src="../../assets/imgs/promotions/coupons/coupon0630/rules.png" width="80%">
   </div>
 </template>
@@ -27,7 +27,8 @@ export default {
   data () {
     return {
       'captchaTxt': '获取验证码',
-      'flag': true
+      'flag': true,
+      'message': ''
     }
   },
   created () {
@@ -44,8 +45,15 @@ export default {
     toggle: function () {
       this.flag = !this.flag
     },
-    checkOffline: function (params, cb) {
-      return api.get('/org/coupon/coupon/bind/offline', params, cb)
+    checkOffline: function (params) {
+      var _t = this
+      return api.get('/org/coupon/coupon/bind/offline', params, function (res) {
+        if (res.code === '000000') {
+          console.log(res)
+        } else {
+          _t.message = res.message
+        }
+      })
     }
   }
 }
