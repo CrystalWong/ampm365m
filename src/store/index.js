@@ -15,26 +15,23 @@ Vue.use(VueResource)
 // }
 const store = new Vuex.Store({
   state: {
-    'tokenId': '',
-    'mobile': '',
-    'userName': '',
-    'openId': ''
+    'mobile': window.sessionStorage.getItem('mobile'),
+    'userId': window.sessionStorage.getItem('userId'),
+    'openId': window.sessionStorage.getItem('openId')
   },
   getters: {
     // loginMsg: state => state.loginMsg
   },
   mutations: {
     sessionStorage (state, pamars) {
-      state.tokenId = pamars.tokenId
       state.mobile = pamars.mobile
-      state.unionId = pamars.unionId
-      state.userName = pamars.userName
+      state.openId = pamars.unionId
+      state.userId = pamars.userId
     }
   },
   actions: {
-    toLogin ({commit, state}, pamars) {
-      service.toLogin(pamars, function (response) {
-        window.sessionStorage.setItem('tokenId', response.tokenid)
+    checkRegister ({commit, state}, pamars) {
+      service.checkRegister(pamars, function (response) {
         window.sessionStorage.setItem('openId', response.openId)
         window.sessionStorage.setItem('mobile', response.mobile)
         window.sessionStorage.setItem('userName', response.userName)

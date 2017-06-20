@@ -16,10 +16,10 @@ const API = class Api {
     }
   }
   get (url, params, cb) {
-    for (var k in params) {
-      url += params[k] + '/'
-    }
-    return Vue.http.get(url).then(function (response) {
+    // for (var k in params) {
+    //   url += params[k] + '/'
+    // }
+    return Vue.http.get(url, {params: params}).then(function (response) {
       cb(response.body)
     }).catch(function(response){
       alert('网络连接失败，请检查您的网络')
