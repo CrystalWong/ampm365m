@@ -4,6 +4,7 @@ import Home from '@/components/main/Home'
 import Menubar from '@/components/main/Menubar'
 import Coupon from '@/components/promotions/Coupon'
 import Luckydraw from '@/components/promotions/Luckydraw'
+import Receivecoupons from '@/components/promotions/Receivecoupons'
 
 Vue.use(Router)
 
@@ -32,6 +33,15 @@ export default new Router({
       default: '',
       main: Luckydraw,
       menubar: Menubar
+    }
+  },
+  {
+    path: '/Receivecoupons',
+    name: 'Receivecoupons',
+    components: {
+      default: Receivecoupons
+      // main: Receivecoupons,
+      // menubar: Menubar
     }
   }]
 })

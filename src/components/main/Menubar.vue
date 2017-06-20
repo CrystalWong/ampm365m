@@ -5,7 +5,7 @@
       <mu-bottom-nav-item value="movies" title="Movies" icon="ondemand_video" to="/"/>
       <mu-bottom-nav-item value="music" title="Music" icon="music_note" to="/luckydraw"/>
       <mu-bottom-nav-item value="books" title="Books" icon="books" to="/coupon"/>
-      <mu-bottom-nav-item value="pictures" title="Pictures" icon="photo"/>
+      <mu-bottom-nav-item value="pictures" title="Pictures" icon="photo" to="/Receivecoupons"/>
     </mu-bottom-nav>
   </mu-paper>
 
