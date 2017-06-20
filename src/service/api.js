@@ -25,14 +25,14 @@ const API = class Api {
       alert('网络连接失败，请检查您的网络')
     })
   }
-  post (url, opt) {
+  post (url, params, cb) {
     return Vue.http.post(url, {params: params}).then(function (response) {
       cb(response.body)
     }).catch(function(response){
-      cb(response.body)
+      alert('网络连接失败，请检查您的网络')
     })
   }
-  jsonp (url, opt) {
+  jsonp (url, params) {
     return Vue.http.jsonp(url, {params: params}).then(function (response) {
       cb(response.body)
     }).catch(function(response){
