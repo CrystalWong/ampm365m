@@ -29,7 +29,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/org': {
-          target: 'http://192.168.103.151/',
+          target: 'http://192.168.103.151:8080/',
           // target: 'http://wechat.ampm365.cn/',
           changeOrigin: true,
           pathRewrite: {

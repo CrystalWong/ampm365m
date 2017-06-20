@@ -19,10 +19,10 @@
 </template>
 
 <script>
-// import API from '@/service/api'
-// import Util from '@/utils'
-// let util = new Util()
-// let api = new API()
+import API from '@/service/api'
+import Util from '@/utils'
+let util = new Util()
+let api = new API()
 export default {
   data () {
     return {
@@ -31,25 +31,22 @@ export default {
     }
   },
   created () {
-    // var url = 'http://localhost:8080/#/coupon?code=jdjffofofof99877'
+    var url = 'http://localhost:8080/#/coupon?code=jdjffofofof99877'
     var params = {
       // 'code': util.getUrlParam(location.href, 'code'),
-      'code': '1111',
+      'code': util.getUrlParam(url, 'code'),
       'channelNo': '1000001'
-      // 'placeSign': 'BANNERDVER',
-      // 'channelNo': '1000001'
     }
     this.$store.dispatch('checkRegister', params)
-    // this.checkOffline()
+    this.checkOffline()
   },
   methods: {
     toggle: function () {
       this.flag = !this.flag
+    },
+    checkOffline: function (params, cb) {
+      return api.get('/org/coupon/coupon/bind/offline', params, cb)
     }
-    // ,
-    // checkOffline: function (params, cb) {
-    //   return api.get('/org/coupon/coupon/bind/offline', params, cb)
-    // }
   }
 }
 </script>

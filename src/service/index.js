@@ -5,7 +5,6 @@ export default {
     return api.get('/org/coupon/coupon/bind/offline', params, cb)
   },
   checkRegister (params, cb) {
-    // return api.post('org/business/CM100111.do', params, cb)
     return api.get('/org/coupon/user/checkandregister', params, cb)
   },
   getCaptcha (params, cb) {
