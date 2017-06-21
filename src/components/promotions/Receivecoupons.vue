@@ -216,11 +216,10 @@ export default {
         this.$http.get('/org/coupon/vacode/send', {params: params}).then(response => {
           _t.someData = response.data
           if (_t.someData.code === '000000') {
-            
           } else if (_t.someData.code === '777777') {
             _t.phoneReplace = true
           } else {
-            
+
           }
         }, response => {
 
