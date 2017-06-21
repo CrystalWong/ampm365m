@@ -28,17 +28,11 @@ export default {
     return {
       'captchaTxt': '获取验证码',
       'flag': true,
-      'message': ''
+      'message': '',
+      'availability': true
     }
   },
   created () {
-    var url = 'http://localhost:8080/#/coupon?code=jdjffofofof99877'
-    var params = {
-      // 'code': util.getUrlParam(location.href, 'code'),
-      'code': util.getUrlParam(url, 'code'),
-      'channelNo': '1000001'
-    }
-    this.$store.dispatch('checkRegister', params)
     this.checkOffline()
   },
   methods: {
@@ -47,13 +41,27 @@ export default {
     },
     checkOffline: function (params) {
       var _t = this
-      return api.get('/org/coupon/coupon/bind/offline', params, function (res) {
+      return api.get('/org/coupon/available/check/offline', params, function (res) {
         if (res.code === '000000') {
-          console.log(res)
+          _t.availability = res.result.available
+          if (_t.availability === false) {
+            location.href = '/#/'
+          } else {
+            _t.checkRegister()
+          }
         } else {
           _t.message = res.message
         }
       })
+    },
+    checkRegister: function () {
+      var url = 'http://wechat.ampm365.cn/dist?code=001XRsmk2ylCDH0ooCmk25ucmk2XRsmW&state=STATE'
+      var params = {
+        // 'code': util.getUrlParam(location.href, 'code'),
+        'code': util.getUrlParam(url, 'code'),
+        'channelNo': '1000001'
+      }
+      this.$store.dispatch('checkRegister', params)
     }
   }
 }

@@ -7,10 +7,10 @@ const Util = class Util {
     }
   }
   getUrlParam (url, name) {
-    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+    var reg = new RegExp(name + '=([^&]*)(&|$)','i')
     var r = url.substr(1).match(reg)
     if (r != null) {
-      return unescape(r[2])
+      return unescape(r[1])
     }
     return null
   }
