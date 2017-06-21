@@ -219,15 +219,12 @@ export default {
           } else if (_t.someData.code === '777777') {
             _t.phoneReplace = true
           } else {
-
           }
         }, response => {
-
         })
       }
     },
     messageShow () {
-
     }
   }
 }

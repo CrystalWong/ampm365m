@@ -5,6 +5,7 @@ import Menubar from '@/components/main/Menubar'
 import Coupon from '@/components/promotions/Coupon'
 import Luckydraw from '@/components/promotions/Luckydraw'
 import Receivecoupons from '@/components/promotions/Receivecoupons'
+import Spreadactive from '@/components/promotions/Spreadactive'
 
 Vue.use(Router)
 
@@ -40,6 +41,15 @@ export default new Router({
     name: 'Receivecoupons',
     components: {
       default: Receivecoupons
+      // main: Receivecoupons,
+      // menubar: Menubar
+    }
+  },
+  {
+    path: '/Spreadactive',
+    name: 'Spreadactive',
+    components: {
+      default: Spreadactive
       // main: Receivecoupons,
       // menubar: Menubar
     }
