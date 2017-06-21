@@ -5,7 +5,7 @@
     <div class="mineBottom">
       <div >
         <!-- <span><router-link to="/Getgifts">当然是我哒</router-link></span> -->
-        <span @click="startTimer">当然是我哒</span>
+        <span @click="getCode">当然是我哒</span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
@@ -66,9 +66,8 @@
     </div>
     <!--dialog end -->
     <!--getgifes start -->
-  
-  <!--getgift end -->
 	</div>
+  <!--getgift end -->
   <div id="getgift" v-show="!isShow">
     <img src="../../assets/imgs/promotions/coupons/coupon0701/interfacethree.png" width="100%">
     <div class="dimensional">
@@ -124,11 +123,18 @@
       </div>  
     </div>
   </div>
-</div>
   <!--receivecupons end -->
+  <div id="activeEnd">
+    <img src="../../assets/imgs/promotions/coupons/coupon0701/activeEnd.png">
+  </div>
+</div>
 </template>
 
 <script>
+import API from '@/service/api'
+import Util from '@/utils'
+let util = new Util()
+let api = new API()
 export default {
   data () {
     return {
@@ -140,6 +146,16 @@ export default {
       codeError: false,
       alreadyRegister: false
     }
+  },
+  created () {
+    var url = 'http://localhost:8080/#/coupon?code=jdjffofofof99877'
+    var params = {
+      // 'code': util.getUrlParam(location.href, 'code'),
+      'code': util.getUrlParam(url, 'code'),
+      'channelNo': '1000001'
+    }
+    this.$store.dispatch('checkRegister', params)
+    this.checkOffline()
   },
   methods: {
     open () { // 弹出弹出层
@@ -174,8 +190,16 @@ export default {
       }
     },
     getCode () { // 验证码请求
-      this.$http.get('/someUrl').then(response => {
-        this.someData = response.body
+      var params = {
+        'yhqId': 370
+      }
+      this.$http.get('/org/coupon/available/check/online', {params: params}).then(response => {
+        this.someData = response.data
+        if (this.someData.available) {
+
+        } else {
+          this.checkOffline()
+        }
       }, response => {
       })
     },
@@ -185,6 +209,9 @@ export default {
       }, response => {
         this.isShow()
       })
+    },
+    checkOffline: function (params, cb) {
+      return api.get('/org/coupon/user/checkandregister', params, cb)
     }
   }
 }
@@ -464,5 +491,12 @@ export default {
     }   
   }
 }  
-  //part2 end
+  // part2 end
+  #activeEnd{
+    img{
+      width: 100%;
+      height:100%;
+    }
+  }
+  // activeEnd 
 </style>
