@@ -29,7 +29,8 @@ export default {
       'captchaTxt': '获取验证码',
       'flag': true,
       'message': '',
-      'availability': true
+      'availability': true,
+      'urlPrefix': location.href.indexOf('test') > 0 ? '/test' : ''
     }
   },
   created () {
@@ -41,7 +42,7 @@ export default {
     },
     checkOffline: function (params) {
       var _t = this
-      return api.get('/org/coupon/available/check/offline', params, function (res) {
+      return api.get(_t.urlPrefix + '/org/coupon/available/check/offline', params, function (res) {
         if (res.code === '000000') {
           _t.availability = res.result.available
           if (_t.availability === false) {
