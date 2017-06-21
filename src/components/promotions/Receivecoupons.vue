@@ -5,7 +5,7 @@
     <div class="mineBottom">
       <div >
         <!-- <span><router-link to="/Getgifts">当然是我哒</router-link></span> -->
-        <span @click="getCode">当然是我哒</span>
+        <span @click="checkOffline">当然是我哒</span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
@@ -52,10 +52,11 @@
     <div id="dialog" >
       <mu-dialog :open="dialog" title="" @close="close">
         <img src="../../assets/imgs/promotions/coupons/coupon0701/framebackg.png" width="100%">
-        <input type="text" placeholder="输入手机号" class="inputPhone">
-        <input type="text" placeholder="输入验证码" class="inputCode">
-        <button type='button'>获取验证码</button>
-        <span v-if :'codeError'>验证码错误，请重新输入</span>
+        <input type="text" placeholder="输入手机号" class="inputPhone" v-model='phoneNum'>
+        <input type="text" placeholder="输入验证码" class="inputCode" v-model='code'>
+        <button type='button' @click="getCode">获取验证码</button>
+        <div v-show="codeError" class="notice">验证码错误，请重新输入</div>
+        <div v-show="phoneReplace" class="notice">该手机号已被绑定，请更换后重试！</div>
         <div class='giveMe'>
           <div>
             <span>是我的，快给我</span>
@@ -123,18 +124,12 @@
       </div>  
     </div>
   </div>
-  <!--receivecupons end -->
-  <div id="activeEnd">
-    <img src="../../assets/imgs/promotions/coupons/coupon0701/activeEnd.png">
-  </div>
 </div>
 </template>
 
 <script>
-import API from '@/service/api'
 import Util from '@/utils'
 let util = new Util()
-let api = new API()
 export default {
   data () {
     return {
@@ -143,19 +138,15 @@ export default {
       timer: 30,
       stop: false,
       Interval: null,
+      alreadyRegister: false,
+      phoneNum: '',
+      code: '',
       codeError: false,
-      alreadyRegister: false
+      phoneReplace: false
     }
   },
   created () {
-    var url = 'http://localhost:8080/#/coupon?code=jdjffofofof99877'
-    var params = {
-      // 'code': util.getUrlParam(location.href, 'code'),
-      'code': util.getUrlParam(url, 'code'),
-      'channelNo': '1000001'
-    }
-    this.$store.dispatch('checkRegister', params)
-    this.checkOffline()
+    // this.getCode()
   },
   methods: {
     open () { // 弹出弹出层
@@ -189,16 +180,23 @@ export default {
         }
       }
     },
-    getCode () { // 验证码请求
+    checkOffline () { // 判断
+      var _t = this
       var params = {
         'yhqId': 370
       }
       this.$http.get('/org/coupon/available/check/online', {params: params}).then(response => {
-        this.someData = response.data
-        if (this.someData.available) {
-
+        _t.someData = response.data
+        if (!_t.someData.available) {
+          _t.open()
         } else {
-          this.checkOffline()
+          // var url = 'http://localhost:8080/#/coupon?code=jdjffofofof99877'
+          // console.log('the data is : ' + util.getUrlParam(url, 'code'))
+          // var params = {
+          //   'code': 'jdjffofofof99877',
+          //   'channelNo': '1000001'
+          // }
+          // _t.$store.dispatch('checkRegister', params)
         }
       }, response => {
       })
@@ -210,8 +208,27 @@ export default {
         this.isShow()
       })
     },
-    checkOffline: function (params, cb) {
-      return api.get('/org/coupon/user/checkandregister', params, cb)
+    getCode () {
+      var _t = this
+      var phoneNum = _t.phoneNum
+      if (util.checkPhoneNum(phoneNum)) {
+        var params = {phone: phoneNum}
+        this.$http.get('/org/coupon/vacode/send', {params: params}).then(response => {
+          _t.someData = response.data
+          if (_t.someData.code === '000000') {
+            
+          } else if (_t.someData.code === '777777') {
+            _t.phoneReplace = true
+          } else {
+            
+          }
+        }, response => {
+
+        })
+      }
+    },
+    messageShow () {
+
     }
   }
 }
