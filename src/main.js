@@ -3,15 +3,17 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import Vuex from 'vuex'
+import Mint from 'mint-ui'
+import 'mint-ui/lib/style.css'
 import MuseUI from 'muse-ui'
 import 'muse-ui/dist/muse-ui.css'
-// import 'muse-ui/dist/theme-light.css'
 import App from '@/components/App'
 import router from '@/router'
 import store from '@/store'
 
 Vue.use(VueResource)
 Vue.use(Vuex)
+Vue.use(Mint)
 Vue.use(MuseUI)
 
 Vue.config.productionTip = false

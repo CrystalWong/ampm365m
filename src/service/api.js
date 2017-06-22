@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
+import { Toast } from 'mint-ui'
 Vue.use(VueResource)
 // Vue.http.interceptors.push((request, next) => {
 //   request.headers.set('APPkey','3')
@@ -16,24 +17,24 @@ const API = class Api {
     }
   }
   get (url, params, cb) {
-    return Vue.http.get(url, {params: params}).then(function (response) {
-      cb(response.body)
-    }).catch(function(response){
-      cb(response.body)
+    return Vue.http.get(url, {params: params}).then(function (res) {
+      cb(res.body)
+    }).catch(function(res){
+      Toast(res.message)
     })
   }
   post (url, params, cb) {
-    return Vue.http.post(url, {params: params}).then(function (response) {
-      cb(response.body)
-    }).catch(function(response){
-      cb(response.body)
+    return Vue.http.post(url, {params: params}).then(function (res) {
+      cb(res.body)
+    }).catch(function(res){
+      Toast(res.message)
     })
   }
   jsonp (url, params) {
-    return Vue.http.jsonp(url, {params: params}).then(function (response) {
-      cb(response.body)
-    }).catch(function(response){
-      cb(response.body)
+    return Vue.http.jsonp(url, {params: params}).then(function (res) {
+      cb(res.body)
+    }).catch(function(res){
+      Toast(res.message)
     })
   }
 }

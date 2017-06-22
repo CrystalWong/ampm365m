@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueResource from 'vue-resource'
 import service from '@/service'
+import { Toast } from 'mint-ui'
 Vue.use(Vuex)
 Vue.use(VueResource)
 // function clearSession () {
@@ -24,40 +25,39 @@ const store = new Vuex.Store({
     // loginMsg: state => state.loginMsg
   },
   mutations: {
-    sessionStorage (state, pamars) {
+    checkRegister (state, pamars) {
       // state.mobile = pamars.mobile
       state.openId = pamars.unionId
       state.userId = pamars.userId
-      state.bindStatus = pamars.bindStatus
+      // state.bindStatus = pamars.bindStatus
+      state.bindStatus = true
     }
   },
   actions: {
     checkRegister ({commit, state}, pamars) {
       service.checkRegister(pamars, function (res) {
         if (res.code === '000000') {
-          window.sessionStorage.setItem('openId', res.unionId)
-          window.sessionStorage.setItem('userId', res.userId)
-          window.sessionStorage.setItem('bindStatus', res.bindStatus)
+          window.sessionStorage.setItem('openId', res.result.unionId)
+          window.sessionStorage.setItem('userId', res.result.userId)
+          window.sessionStorage.setItem('bindStatus', res.result.bindStatus)
           var info = {
-            // 'mobile': res.mobile,
-            'unionId': res.unionId,
-            'userId': res.userId,
-            'bindStatus': res.bindStatus
+            'unionId': res.result.unionId,
+            'userId': res.result.userId,
+            'bindStatus': res.result.bindStatus
           }
-          commit('sessionStorage', info)
+          commit('checkRegister', info)
         } else {
-          alert(res.message)
+          Toast(res.message)
         }
       })
     },
     getCaptcha ({commit, state}, pamars) {
-      service.getCaptcha(pamars, function (response) {
-        console.log(response)
-      })
-    },
-    submitCaptcha ({commit, state}, pamars) {
-      service.submitCaptcha(pamars, function (response) {
-        window.sessionStorage.setItem('mobile', pamars.mobile)
+      service.getCaptcha(pamars, function (res) {
+        if (res.code === '000000') {
+          Toast('验证码已成功发送，请注意查收～')
+        } else {
+          Toast(res.message)
+        }
       })
     }
   }

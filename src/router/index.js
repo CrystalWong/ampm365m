@@ -3,8 +3,8 @@ import Router from 'vue-router'
 import Home from '@/components/main/Home'
 import Menubar from '@/components/main/Menubar'
 import Coupon from '@/components/promotions/Coupon'
-import Luckydraw from '@/components/promotions/Luckydraw'
-import Receivecoupons from '@/components/promotions/Receivecoupons'
+import ReceiveCoupons from '@/components/promotions/ReceiveCoupons'
+import ActivityEnd from '@/components/promotions/ActivityEnd'
 
 Vue.use(Router)
 
@@ -27,19 +27,17 @@ export default new Router({
     }
   },
   {
-    path: '/luckydraw',
-    name: 'luckydraw',
+    path: '/activityend',
+    name: 'activityend',
     components: {
-      default: '',
-      main: Luckydraw,
-      menubar: Menubar
+      default: ActivityEnd
     }
   },
   {
-    path: '/Receivecoupons',
-    name: 'Receivecoupons',
+    path: '/receivecoupons',
+    name: 'receivecoupons',
     components: {
-      default: Receivecoupons
+      default: ReceiveCoupons
       // main: Receivecoupons,
       // menubar: Menubar
     }
