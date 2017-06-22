@@ -14,6 +14,11 @@ const Util = class Util {
     }
     return null
   }
+  checkPhoneNum (num) {
+    var reg = new RegExp('^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}$')
+    var r = num.match(reg)
+    return r
+  }
 }
 
 export default Util

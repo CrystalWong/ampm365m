@@ -9,7 +9,6 @@
       v-model="pickerValue">
     </mt-datetime-picker>
   </div>
-  
 </template>
 
 <script>

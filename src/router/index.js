@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/main/Home'
-import Menubar from '@/components/main/Menubar'
+import MenuBar from '@/components/main/MenuBar'
 import Coupon from '@/components/promotions/Coupon'
 import ReceiveCoupons from '@/components/promotions/ReceiveCoupons'
 import ActivityEnd from '@/components/promotions/ActivityEnd'
+import SpreadActive from '@/components/promotions/SpreadActive'
 
 Vue.use(Router)
 
@@ -14,7 +15,7 @@ export default new Router({
     name: 'Home',
     components: {
       default: Home,
-      menubar: Menubar
+      menubar: MenuBar
     }
   },
   {
@@ -38,8 +39,13 @@ export default new Router({
     name: 'receivecoupons',
     components: {
       default: ReceiveCoupons
-      // main: Receivecoupons,
-      // menubar: Menubar
+    }
+  },
+  {
+    path: '/spreadactive',
+    name: 'spreadactive',
+    components: {
+      default: SpreadActive
     }
   }]
 })
