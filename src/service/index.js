@@ -8,5 +8,11 @@ export default {
   },
   getCaptcha (params, cb) {
     return api.get(urlPrefix + '/org/coupon/vacode/send', params, cb)
+  },
+  bindMobile (params, cb) {
+    return api.get(urlPrefix + '/org/coupon/user/bind', params, cb)
+  },
+  OAuth2sdk (params, cb) {
+  	return api.post(urlPrefix + '/org/business/DE100006.do', params, cb)
   }
 }

@@ -1,12 +1,12 @@
 <template>
-  <div id="coupon" class="set-bg">
+  <div id="coupon" class="set-bg" v-show="flag">
     <!-- 没绑过定手机号 start -->
     <div class="page-1" v-if="!bindStatus">
       <img src="../../assets/imgs/promotions/coupons/coupon0630/top.png" width="100%">
       <input type="tel" name="mobile" class="item-wrap set-bg outer-bg mobile" placeholder="输入手机号" v-model.trim="mobile" maxlength="11">
       <div class="item-wrap captcha-wrap">
         <input type="text" name="captcha" class="set-bg outer-bg captcha fl" placeholder="输入验证码" v-model.trim="captcha" maxlength="6">
-        <div class="set-bg outer-bg get-captcha fr" v-if="!timerFlag">{{ captchaDisable }}</div>
+        <div class="set-bg outer-bg get-captcha fr" v-if="!timerFlag">{{ captchaDisable }}S后重发</div>
         <div class="set-bg outer-bg get-captcha fr" @click="getCaptcha" v-if="timerFlag">{{ "获取验证码" }}</div>
       </div>
       <div class="item-wrap submitMobile" @click="bindMobile" v-if="mobile !=='' && captcha !=='' && bindable">确定</div>
@@ -16,7 +16,7 @@
     <!-- 绑定过手机号 start -->
     <div class="page-2" v-if="bindStatus">
       <img src="../../assets/imgs/promotions/coupons/coupon0630/top2.png" width="100%">
-      <div class="item-wrap set-bg outer-bg get-coupon" @click="getcoupon">我要领赠品</div>
+      <div class="item-wrap set-bg outer-bg get-coupon" @click="getCoupon">我要领赠品</div>
       <!-- 优惠码弹窗 start -->
       <div class="mask" v-if="dialogShow"></div>
       <div class="dialog set-bg" v-if="dialogShow">
@@ -25,7 +25,7 @@
           <div class="dialog-body">
             <img :src="imgUrl" width="80%">
           </div>
-          <div class="set-bg outer-bg dialog-btn" @click="close">确定</div>         
+          <div class="set-bg outer-bg dialog-btn" @click="close">关&nbsp;闭</div>         
         </div>
       </div>
       <!-- 优惠码弹窗 end -->
@@ -35,8 +35,8 @@
     <img src="../../assets/imgs/promotions/coupons/coupon0630/rules.png" width="80%">
   </div>
 </template>
-
 <script>
+import service from '@/service'
 import API from '@/service/api'
 import Util from '@/utils'
 import { Toast } from 'mint-ui'
@@ -49,20 +49,21 @@ export default {
       'imgUrl': '',
       'captchaDisable': '获取验证码',
       'message': '',
-      'availability': true,
+      'flag': false,
       'bindable': true,
       'mobile': '',
       'captcha': '',
       'timerFlag': true,
       'urlPrefix': location.href.indexOf('test') > 0 ? '/test' : '',
-      'openId': window.sessionStorage.getItem('openId'),
-      'userId': window.sessionStorage.getItem('userId'),
-      'bindStatus': window.sessionStorage.getItem('bindStatus')
+      'openId': '',
+      'userId': '',
+      'bindStatus': ''
     }
   },
   created () {
+    document.title = '领取赠品'
+    this.getOAuth2sdk()
     this.checkOffline()
-    console.log(this.openId, this.userId, this.bindStatus)
   },
   methods: {
     close () {
@@ -74,8 +75,11 @@ export default {
         if (res.code === '000000') {
           _t.availability = res.result.available
           if (_t.availability === false) {
-            // location.href = '/#/activityend'
-            location.href = 'http://wechat.ampm365.cn/test/promotion/#/activityend'
+            if (_t.urlPrefix === '/test') {
+              location.href = 'http://wechat.ampm365.cn/test/promotion/#/activityend'
+            } else {
+              location.href = 'http://wechat.ampm365.cn/promotion/#/activityend'
+            }
           } else {
             _t.checkRegister()
           }
@@ -90,20 +94,20 @@ export default {
         'code': util.getUrlParam(location.href, 'code'),
         'channelNo': '1000001'
       }
-      return api.get(_t.urlPrefix + '/org/coupon/user/checkandregister', params, function (res) {
+      service.checkRegister(params, function (res) {
         if (res.code === '000000') {
-          window.sessionStorage.setItem('openId', res.result.openId)
-          window.sessionStorage.setItem('userId', res.result.userId)
-          window.sessionStorage.setItem('bindStatus', res.result.bindStatus)
+        // if (res.code !== '000000') {
           _t.openId = res.result.openId
           _t.userId = res.result.userId
           _t.bindStatus = res.result.bindStatus
-          // window.sessionStorage.setItem('openId', '888')
-          // window.sessionStorage.setItem('userId', '22902')
-          // window.sessionStorage.setItem('bindStatus', true)
+          _t.flag = true
         } else {
-          Toast(res.message)
-          location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Ftest%2Fpromotion%2F%23%2Fcoupon&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          // Toast(res.message)
+          if (_t.urlPrefix === '/test') {
+            location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Ftest%2Fpromotion%2F%23%2Fcoupon&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          } else {
+            location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Fpromotion%2F%23%2Fcoupon&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          }
         }
       })
     },
@@ -121,10 +125,10 @@ export default {
       var _t = this
       var s = 60
       _t.timerFlag = false
-      _t.captchaDisable = s + 'S后重发'
+      _t.captchaDisable = s
       function clock () {
         s -= 1
-        _t.captchaDisable = s + 'S后重发'
+        _t.captchaDisable = s
         if (s <= 0) {
           clearInterval(tim)
           _t.timerFlag = true
@@ -140,8 +144,15 @@ export default {
           'phone': _t.mobile,
           'channel': '1001'
         }
-        _t.timer()
-        _t.$store.dispatch('getCaptcha', params)
+        service.getCaptcha(params, function (res) {
+          if (res.code === '000000') {
+            _t.timer()
+            Toast('验证码已成功发送，请注意查收～')
+          } else {
+            _t.timerFlag = true
+            Toast(res.message)
+          }
+        })
       }
     },
     bindMobile: function () {
@@ -153,7 +164,7 @@ export default {
         'openId': _t.openId
       }
       _t.bindable = false
-      return api.get(_t.urlPrefix + '/org/coupon/user/bind', params, function (res) {
+      service.bindMobile(params, function (res) {
         if (res.code === '000000') {
           _t.bindStatus = true
         } else {
@@ -162,7 +173,7 @@ export default {
         _t.bindable = true
       })
     },
-    getcoupon: function () {
+    getCoupon: function () {
       var _t = this
       var params = {
         'userId': _t.userId,
@@ -178,6 +189,55 @@ export default {
           _t.dialogShow = true
         } else {
           Toast(res.message)
+        }
+      })
+    },
+    setwxConfig: function (res) {
+      var _t = this
+      console.log(res)
+      wx.config({
+        debug: false,
+        appId: res.appid,
+        timestamp: res.timestamp,
+        nonceStr: res.nonceStr,
+        signature: res.signature,
+        jsApiList: ['onMenuShareAppMessage']
+      })
+      _t.applyWeChat()
+    },
+    shareInit: function() {
+      wx.onMenuShareAppMessage({
+        title: '【关东煮免费吃】', // 分享标题
+        desc: '全时便利店周年庆，进店即可领取关东煮一份', // 分享描述
+        link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Fpromotion%2F%23%2Fcoupon&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect', // 分享链接
+        imgUrl: 'http://wechat.ampm365.cn/promotion/static/top2.png', // 分享图标
+        type: '', // 分享类型,music、video或link，不填默认为link
+        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+        success: function() {
+          Toast('分享成功！')
+        },
+        cancel: function() {
+          Toast('分享失败！')
+        }
+      })
+    },
+    applyWeChat: function() {
+      var _t = this;
+      wx.ready(function() {
+        _t.shareInit();
+      });
+      wx.error(function(res) {});
+    },
+    getOAuth2sdk: function () {
+      var _t = this
+      var params = {
+        'channelNo': '1000001',
+        'type': 'jsapi',
+        'url': encodeURIComponent(window.location.href)
+      }
+      service.OAuth2sdk(params, function (res) {
+        if (res.code === '000000') {
+           _t.setwxConfig(res.result)
         }
       })
     }
