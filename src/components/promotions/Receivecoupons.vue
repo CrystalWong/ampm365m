@@ -309,6 +309,7 @@ export default {
       top: 12.7rem;
       width: 100%;
       text-align: center;
+      background-color: #cc0000;
       .ruleTitle{
         position: relative;
         margin-bottom: 0.2rem;
@@ -454,6 +455,7 @@ export default {
       top: 14.65rem;
       width: 100%;
       text-align: center;
+      background-color: #cc0000;
       .ruleTitle{
         position: relative;
         margin-bottom: 0.2rem;
