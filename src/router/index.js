@@ -6,6 +6,8 @@ import Coupon from '@/components/promotions/Coupon'
 import ReceiveCoupons from '@/components/promotions/ReceiveCoupons'
 import ActivityEnd from '@/components/promotions/ActivityEnd'
 import SpreadActive from '@/components/promotions/SpreadActive'
+import Share from '@/components/promotions/Share'
+import Receivesucc from '@/components/promotions/Receivesucc'
 
 Vue.use(Router)
 
@@ -46,6 +48,20 @@ export default new Router({
     name: 'spreadactive',
     components: {
       default: SpreadActive
+    }
+  },
+  {
+    path: '/share/:id',
+    name: 'share',
+    components: {
+      default: Share
+    }
+  },
+  {
+    path: '/receivesucc',
+    name: 'receivesucc',
+    components: {
+      default: Receivesucc
     }
   }]
 })
