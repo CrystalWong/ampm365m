@@ -90,8 +90,13 @@ export default {
     },
     checkRegister: function () {
       var _t = this
+      var urlStr = location.href
+      // var iframe_link = document.getElementById('iframe_link')
+      // if (iframe_link.length > 0) {
+      //   urlStr = iframe_link.src
+      // }
       var params = {
-        'code': util.getUrlParam(location.href, 'code'),
+        'code': util.getUrlParam(urlStr, 'code'),
         'channelNo': '1000001'
       }
       service.checkRegister(params, function (res) {
@@ -233,7 +238,7 @@ export default {
       var params = {
         'channelNo': '1000001',
         'type': 'jsapi',
-        'url': encodeURIComponent(window.location.href)
+        'url': encodeURIComponent(window.location.href.split('#')[0])
       }
       service.OAuth2sdk(params, function (res) {
         if (res.code === '000000') {
