@@ -5,7 +5,7 @@
     <div class="mineBottom">
       <div >
         <!-- <span><router-link to="/Getgifts">当然是我哒</router-link></span> -->
-        <span @click="checkOffline">当然是我哒</span>
+        <span @click="CheckCoupon">当然是我哒</span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
@@ -54,15 +54,21 @@
         <img src="../../assets/imgs/promotions/coupons/coupon0701/framebackg.png" width="100%">
         <input type="text" placeholder="输入手机号" class="inputPhone" v-model='phoneNum'>
         <input type="text" placeholder="输入验证码" class="inputCode" v-model='code'>
-        <button type='button' @click="getCode">获取验证码</button>
-        <div v-show="codeError" class="notice">验证码错误，请重新输入</div>
-        <div v-show="phoneReplace" class="notice">该手机号已被绑定，请更换后重试！</div>
-        <div class='giveMe'>
+        <button type='button' @click="getCaptcha" v-if="timerFlag">{{ "获取验证码" }}</button>
+        <button type='button' v-if="!timerFlag">{{ captchaDisable }}S后重发</button>
+        <div v-show="message"  class="notice">{{message}}</div>
+        <div class='giveMe' @click="bindMobile" v-if="clickAble">
           <div>
             <span>是我的，快给我</span>
             <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
           </div>
-        </div>  
+        </div> 
+        <div class='giveMe' v-if="clickAble">
+          <div>
+            <span>是我的，快给我</span>
+            <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
+          </div>
+        </div>   
       </mu-dialog>
     </div>
     <!--dialog end -->
@@ -128,25 +134,55 @@
 </template>
 
 <script>
+import service from '@/service'
+import API from '@/service/api'
 import Util from '@/utils'
+import { Toast } from 'mint-ui'
 let util = new Util()
+let api = new API()
 export default {
   data () {
     return {
-      dialog: false,
-      isShow: true,
-      timer: 30,
-      stop: false,
-      Interval: null,
-      alreadyRegister: false,
-      phoneNum: '',
-      code: '',
-      codeError: false,
-      phoneReplace: false
+      'openId': '',
+      'userId': '',
+      'imgUrl': '',
+      'flag': false,
+      'timerFlag': true,
+      'titleMaxLength': 11,
+      'dialog': false,
+      'isShow': true,
+      'timer': 30,
+      'stop': false,
+      'Interval': null,
+      'alreadyRegister': false,
+      'phoneNum': '',
+      'code': '',
+      'captchaDisable': '获取验证码',
+      'phoneError': false,
+      'userId': '',
+      'message': '',
+      'urlPrefix': location.href.indexOf('test') > 0 ? '/test' : '',
+      'clickAble': true,
+      'bindStatus': null
+    }
+  },
+  watch: {
+    phoneNum () {
+      var _t = this
+      if (_t.phoneNum.length > _t.titleMaxLength) {
+        _t.phoneNum = String(_t.phoneNum).slice(0, this.titleMaxLength)
+      }
     }
   },
   created () {
-    // this.getCode()
+     document.title = '领取赠品'
+     this.getOAuth2sdk()
+     this.checkOnline()
+  },
+  filters: {
+    sliceString: function (str, start, length) {
+      return str.slice(start, length)
+    }
   },
   methods: {
     open () { // 弹出弹出层
@@ -155,77 +191,182 @@ export default {
     close () { // 关闭弹出层
       this.dialog = false
     },
-    toggle () { // 切换页面
-      this.isShow = !this.isShow
-      console.log(this.isShow)
-    },
-    update () { // 验证码倒计时
-      if (this.timer <= 0) {
-        clearInterval(this.Interval)
-      } else {
-        this.timer--
-      }
-      console.log('this.timer is : ' + this.timer)
-    },
-    startTimer () { // 验证码倒计时控制
-      if (this.stop === false) {
-        this.stop = !this.stop
-        this.getCode()
-        this.Interval = setInterval(this.update, 1000)
-      } else {
-        if (this.timer <= 0) {
-          this.stop = !this.stop
-          this.startTimer()
-          this.timer = 30
+    timer: function () {
+      var _t = this
+      var s = 60
+      _t.timerFlag = false
+      _t.captchaDisable = s
+      function clock () {
+        s -= 1
+        _t.captchaDisable = s
+        if (s <= 0) {
+          clearInterval(tim)
+          _t.timerFlag = true
         }
       }
+      var tim = setInterval(clock, 1000)
     },
-    checkOffline () { // 判断
+    checkOnline () { // 判断
       var _t = this
       var params = {
-        'yhqId': 370
+        'yhqId': 371
       }
-      this.$http.get('/org/coupon/available/check/online', {params: params}).then(response => {
-        _t.someData = response.data
-        if (!_t.someData.available) {
-          _t.open()
+      return api.get(_t.urlPrefix + '/org/coupon/available/check/online', params, function (res) {
+        if (res.code === '000000') {
+          _t.availability = res.result.available
+          if (_t.availability === false) {
+            if (_t.urlPrefix === '/test') {
+              location.href = 'http://wechat.ampm365.cn/test/promotion/#/activityend'
+            } else {
+              location.href = 'http://wechat.ampm365.cn/promotion/#/activityend'
+            }
+          } else {
+            _t.checkRegister()
+          }
         } else {
-          // var url = 'http://localhost:8080/#/coupon?code=jdjffofofof99877'
-          // console.log('the data is : ' + util.getUrlParam(url, 'code'))
-          // var params = {
-          //   'code': 'jdjffofofof99877',
-          //   'channelNo': '1000001'
-          // }
-          // _t.$store.dispatch('checkRegister', params)
+          _t.message = res.message
         }
-      }, response => {
       })
     },
-    userRegister () {
-      this.$http.get('/someUrl').then(response => {
-        this.someData = response.body
-      }, response => {
-        this.isShow()
+    //绑定手机
+    bindMobile: function () {
+      var _t = this
+      var params = {
+        'phone': _t.mobile,
+        'vacode': _t.captcha,
+        'userId': _t.userId,
+        'openId': _t.openId
+      }
+      _t.clickAble = false
+      service.bindMobile(params, function (res) {
+        if (res.code === '000000') {
+          _t.isShow = false
+        } else {
+          Toast(res.message)
+        }
+        _t.clickAble = true
       })
     },
-    getCode () {
+    CheckCoupon: function () {
+      var _t = this
+       if (_t.bindStatus) {
+        getCoupon()
+      } else {
+        _t.open()
+      }
+    },
+    // 优惠券领取
+    getCoupon: function () {
+      var _t = this
+      var params = {
+        'userId': _t.userId,
+        'yhqId': 371
+      }
+      return api.get(_t.urlPrefix + '/org/coupon/coupon/bind/online', params, function (res) {
+        if (res.code === '000000') {
+          _t.isShow = false 
+        } else {
+          Toast(res.message)
+        }
+      })
+    },
+    // 获取验证码
+    getCaptcha: function () {
       var _t = this
       var phoneNum = _t.phoneNum
       if (util.checkPhoneNum(phoneNum)) {
-        var params = {phone: phoneNum}
-        this.$http.get('/org/coupon/vacode/send', {params: params}).then(response => {
-          _t.someData = response.data
-          if (_t.someData.code === '000000') {
-          } else if (_t.someData.code === '777777') {
-            _t.phoneReplace = true
+        var params = {
+          'phone': phoneNum,
+          'channel': '1001'
+        }
+        service.getCaptcha(params, function (res) {
+          console.log('the code is : ' + res.code )
+          if (res.code === '000000') {
+            _t.timerFlag = false
+            _t.timer()
+            _t.message = '验证码已成功发送，请注意查收～'
           } else {
+            _t.timerFlag = true
+            _t.message = res.message
           }
-        }, response => {
         })
+      } else {
+        _t.message = '手机号码格式错误！'
       }
     },
-    messageShow () {
+    // 判断该用户是否绑定了手机号
+    checkRegister: function () {
+      var _t = this
+      var params = {
+        'code': util.getUrlParam(location.href, 'code'),
+        'channelNo': '1000001'
+      }
+      service.checkRegister(params, function (res) {
+        if (res.code === '000000') {
+          _t.openId = res.result.openId
+          _t.userId = res.result.userId
+          _t.bindStatus = res.result.bindStatus
+
+        } else {
+          if (_t.urlPrefix === '/test') {
+            location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Ftest%2Fpromotion%2F%23%2FReceivecoupons&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          } else {
+            location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Fpromotion%2F%23%2FReceivecoupons&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          }
+        }
+      })
+    },
+    // checkRegister end
+    getOAuth2sdk: function () {
+      var _t = this
+      var params = {
+        'channelNo': '1000001',
+        'type': 'jsapi',
+        'url': encodeURIComponent(window.location.href)
+      }
+      service.OAuth2sdk(params, function (res) {
+        if (res.code === '000000') {
+           _t.setwxConfig(res.result)
+        }
+      })
+    },
+    setwxConfig: function (res) {
+      var _t = this
+      console.log(res)
+      wx.config({
+        debug: false,
+        appId: res.appid,
+        timestamp: res.timestamp,
+        nonceStr: res.nonceStr,
+        signature: res.signature,
+        jsApiList: ['onMenuShareAppMessage']
+      })
+      _t.applyWeChat()
+    }, 
+    shareInit: function() {
+      wx.onMenuShareAppMessage({
+        title: '【关东煮免费吃】', // 分享标题
+        desc: '全时便利店周年庆，进店即可领取关东煮一份', // 分享描述
+        link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Fpromotion%2F%23%2FReceivecoupons&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect', // 分享链接
+        imgUrl: 'http://wechat.ampm365.cn/promotion/static/top2.png', // 分享图标
+        type: '', // 分享类型,music、video或link，不填默认为link
+        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+        success: function() {
+          Toast('分享成功！')
+        },
+        cancel: function() {
+          Toast('分享失败！')
+        }
+      })
+    },
+    applyWeChat: function() {
+      var _t = this;
+      wx.ready(function() {
+        _t.shareInit();
+      });
+      wx.error(function(res) {});
     }
+    // applyWeChat end
   }
 }
 </script>
