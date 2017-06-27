@@ -53,22 +53,22 @@
       <mu-dialog :open="dialog" title="" @close="close">
         <img src="../../assets/imgs/promotions/coupons/coupon0701/framebackg.png" width="100%">
         <input type="text" placeholder="输入手机号" class="inputPhone" v-model='phoneNum'>
-        <input type="text" placeholder="输入验证码" class="inputCode" v-model='code'>
+        <input type="text" placeholder="输入验证码" class="inputCode" v-model.trim="captcha" maxlength="6">
         <button type='button' @click="getCaptcha" v-if="timerFlag">{{ "获取验证码" }}</button>
         <button type='button' v-if="!timerFlag">{{ captchaDisable }}S后重发</button>
         <div v-show="message"  class="notice">{{message}}</div>
-        <div class='giveMe' @click="bindMobile" v-if="clickAble">
+        <div class='giveMe' @click="bindMobile">
           <div>
             <span>是我的，快给我</span>
             <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
           </div>
         </div> 
-        <div class='giveMe' v-if="clickAble">
+        <!-- <div class='giveMe' v-if="clickAble">
           <div>
             <span>是我的，快给我</span>
             <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
           </div>
-        </div>   
+        </div>    -->
       </mu-dialog>
     </div>
     <!--dialog end -->
@@ -160,6 +160,7 @@ export default {
       'phoneError': false,
       'userId': '',
       'message': '',
+      'captcha': '',
       'urlPrefix': location.href.indexOf('test') > 0 ? '/test' : '',
       'clickAble': true,
       'bindStatus': null
@@ -231,7 +232,7 @@ export default {
     bindMobile: function () {
       var _t = this
       var params = {
-        'phone': _t.mobile,
+        'phone': _t.phoneNum,
         'vacode': _t.captcha,
         'userId': _t.userId,
         'openId': _t.openId
