@@ -305,7 +305,6 @@ export default {
           _t.openId = res.result.openId
           _t.userId = res.result.userId
           _t.bindStatus = res.result.bindStatus
-
         } else {
           if (_t.urlPrefix === '/test') {
             location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Ftest%2Fpromotion%2F%23%2FReceivecoupons&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'

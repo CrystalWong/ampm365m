@@ -51,7 +51,7 @@ export default new Router({
     }
   },
   {
-    path: '/share/:id',
+    path: '/share',
     name: 'share',
     components: {
       default: Share
