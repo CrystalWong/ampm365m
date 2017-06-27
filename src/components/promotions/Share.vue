@@ -200,7 +200,6 @@ export default {
         } else {
           var url = '/org/coupon/coupon/bind/online?userId=' + that.userId + '&yhqId=373'
           this.$http.get(url).then(function (data) {
-            console.log(data)
             this.$router.push('/receivesucc')
           }, function () {
             this.message = '获取数据失败'
