@@ -75,6 +75,7 @@ export default {
   created () {
     this.id = this.$route.params.id
     this.page(this.id)
+    this.getCode()
   },
   methods: {
     page: function (shareId) {
@@ -180,6 +181,22 @@ export default {
       } else {
         this.grayConfirm = true
       }
+    },
+//  获取code值
+    getCode: function () {
+      var url = location.href;
+      var code = Util.getUrlParam(url,code)
+      console.log(code)
+      var url = '/org/coupon/user/checkandregister?code=' + code + '&channelNo=1000001'
+      this.$http.get(url).then(function (data) {
+        console.log(data)
+        if (data.body.code !== '000000') {
+          this.message = data.body.message
+          this.binding = true
+        }
+      }, function () {
+        this.message = '获取数据失败'
+      })
     }
   }
 }
