@@ -69,7 +69,9 @@ export default {
 //    验证码
       inCaptcha: '',
 //    验证手机,报错返回信息
-      message: ''
+      message: '',
+      openId: '',
+      userId: ''
     }
   },
   created () {
@@ -184,19 +186,38 @@ export default {
     },
 //  获取code值
     getCode: function () {
-      var url = location.href;
-      var code = Util.getUrlParam(url,code)
+      var code = this.GetQueryString('code')
       console.log(code)
+      var that = this
       var url = '/org/coupon/user/checkandregister?code=' + code + '&channelNo=1000001'
       this.$http.get(url).then(function (data) {
         console.log(data)
-        if (data.body.code !== '000000') {
-          this.message = data.body.message
-          this.binding = true
+        console.log(data.body.result.bindStatus)
+        that.openId = data.body.result.openId
+        that.userId = data.body.result.userId
+        if (data.body.result.bindStatus) {
+          this.$router.push('/share/2')
+        } else {
+          var url = '/org/coupon/coupon/bind/online?userId=' + that.userId + '&yhqId=373'
+          this.$http.get(url).then(function (data) {
+            console.log(data)
+            this.$router.push('/receivesucc')
+          }, function () {
+            this.message = '获取数据失败'
+          })
         }
       }, function () {
         this.message = '获取数据失败'
       })
+    },
+    GetQueryString: function (name) {
+      var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)")
+      var r = window.location.search.substr(1).match(reg)
+      if (r!=null) {
+        return unescape(r[2])
+      } else {
+        return null
+      }
     }
   }
 }
