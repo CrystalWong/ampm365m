@@ -174,9 +174,9 @@ export default {
     }
   },
   created () {
-     // document.title = '领取赠品'
-     // this.getOAuth2sdk()
-     // this.checkOnline()
+    document.title = '领取赠品'
+    this.getOAuth2sdk()
+    this.checkOnline()
   },
   filters: {
     sliceString: function (str, start, length) {
