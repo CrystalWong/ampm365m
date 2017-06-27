@@ -86,7 +86,7 @@
       </div>
       <div >
         <!-- <span><router-link to="/">去买买买</router-link></span> -->
-        <span @click="toggle">去买买买</span>
+        <span >去买买买</span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
@@ -151,13 +151,12 @@ export default {
       'titleMaxLength': 11,
       'dialog': false,
       'isShow': true,
-      'timer': 30,
       'stop': false,
       'Interval': null,
       'alreadyRegister': false,
       'phoneNum': '',
       'code': '',
-      'captchaDisable': '获取验证码',
+      'captchaDisable': '',
       'phoneError': false,
       'userId': '',
       'message': '',
@@ -175,9 +174,9 @@ export default {
     }
   },
   created () {
-     document.title = '领取赠品'
-     this.getOAuth2sdk()
-     this.checkOnline()
+     // document.title = '领取赠品'
+     // this.getOAuth2sdk()
+     // this.checkOnline()
   },
   filters: {
     sliceString: function (str, start, length) {
@@ -249,8 +248,8 @@ export default {
     },
     CheckCoupon: function () {
       var _t = this
-       if (_t.bindStatus) {
-        getCoupon()
+      if (_t.bindStatus) {
+        _t.getCoupon()
       } else {
         _t.open()
       }
@@ -280,11 +279,10 @@ export default {
           'channel': '1001'
         }
         service.getCaptcha(params, function (res) {
-          console.log('the code is : ' + res.code )
           if (res.code === '000000') {
             _t.timerFlag = false
+             _t.message = '验证码已成功发送，请注意查收～'
             _t.timer()
-            _t.message = '验证码已成功发送，请注意查收～'
           } else {
             _t.timerFlag = true
             _t.message = res.message
@@ -376,7 +374,7 @@ export default {
     position: relative;
     .mineBottom{
       position: absolute;
-      top: 8.7rem;
+      top: 7.6rem;
       width: 100%;
       div{
         position: relative;
@@ -398,7 +396,7 @@ export default {
     }
   .activeTime{
       position: absolute;
-      top: 10.2rem;
+      top: 8.95rem;
       width: 100%;
       text-align: center;
       .activeTitle{
@@ -447,7 +445,7 @@ export default {
     }
     .activeRule{
       position: absolute;
-      top: 12.7rem;
+      top: 11.35rem;
       width: 100%;
       text-align: center;
       background-color: #cc0000;
