@@ -402,8 +402,8 @@ export default {
       text-align: center;
       line-height: 0.96rem;
       color: #660000;
-      font-size: 0.32rem;
       font-weight: 600;
+      font-size: 0.32rem;
       background: url('../../assets/imgs/promotions/share/share0705/beaukug.png') no-repeat;
       background-size: 100% 100%;
       background-color: transparent;
