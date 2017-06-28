@@ -79,7 +79,7 @@
         <span>关注该，直接买</span>
       </div>
       <div >
-         <span><router-link to="/" style='color:#000 !important'>去买买买</router-link></span>
+         <span><router-link to="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/test/index.html&response_type=code&scope=snsapi_userinfo&state=STATE" style='color:#000 !important'>去买买买</router-link></span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
