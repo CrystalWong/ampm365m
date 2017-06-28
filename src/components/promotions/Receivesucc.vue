@@ -1,5 +1,5 @@
 <template>
-  <div id="share">
+  <div id="receive">
     <!--优惠券页面-->
     <div class="coupon-bg bg" v-show="coupon">
       <div class="qrCode">
@@ -11,8 +11,41 @@
               去买买买
         </div>
       </div>
+      
       <div class="activity">
-        <img src="../../assets/imgs/promotions/share/share0705/activity.jpg" alt="" />
+        <div class="activityTime">
+                    活动时间
+        </div>
+        <div class="activeMessage">
+          <span class="num">1</span>
+          <span class="cont">领取时间：2017年7月5日-7月7日</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">2</span>
+          <span class="cont">使用时间：2017年7月8日-7月16日</span>
+        </div>
+        <div class="activityRule">
+                    活动规则
+        </div>
+        <div class="activeMessage">
+          <span class="num">1</span>
+          <span class="cont">每个用户限领一张优惠券；</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">2</span>
+          <span class="cont">优惠券仅限在全时微信商城下单使用；</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">3</span>
+          <span class="cont">活动火爆，优惠券数量有限，领完即止；</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">4</span>
+          <span class="cont">优惠券限在有效期内使用。</span>
+        </div>
+        <div class="bottomMessage">
+                          此次活动最终解释权归北京全时叁陆伍连锁便利店有限公司所有
+        </div>
       </div>
     </div>
   
@@ -35,7 +68,39 @@
         <p v-show="truePhone">请使用正确手机号</p>
       </div>
       <div class="activity">
-        <img src="../../assets/imgs/promotions/share/share0705/activity.jpg" alt="" />
+        <div class="activityTime">
+                    活动时间
+        </div>
+        <div class="activeMessage">
+          <span class="num">1</span>
+          <span class="cont">领取时间：2017年7月5日-7月7日</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">2</span>
+          <span class="cont">使用时间：2017年7月8日-7月16日</span>
+        </div>
+        <div class="activityRule">
+                    活动规则
+        </div>
+        <div class="activeMessage">
+          <span class="num">1</span>
+          <span class="cont">每个用户限领一张优惠券；</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">2</span>
+          <span class="cont">优惠券仅限在全时微信商城下单使用；</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">3</span>
+          <span class="cont">活动火爆，优惠券数量有限，领完即止；</span>
+        </div>
+        <div class="activeMessage">
+          <span class="num">4</span>
+          <span class="cont">优惠券限在有效期内使用。</span>
+        </div>
+        <div class="bottomMessage">
+                          此次活动最终解释权归北京全时叁陆伍连锁便利店有限公司所有
+        </div>
       </div>
     </div>
   </div>
@@ -67,6 +132,7 @@ export default {
 //    验证手机,报错返回信息
       message: '',
       openId: '',
+      urlPrefix: location.href.indexOf('test') > 0 ? '/test' : '',
       userId: ''
     }
   },
@@ -81,23 +147,16 @@ export default {
     // 确认按钮
     confirmClick: function () {
       var that = this
-      var url = '/org/coupon/user/bind?userId=' + this.userId + '&phone=' + this.phoneValue + '&vacode=' + this.inCaptcha
+      var url = this.urlPrefix + '/org/coupon/user/bind?userId=' + this.userId + '&phone=' + this.phoneValue + '&vacode=' + this.inCaptcha
       this.$http.get(url).then(function (data) {
         if (data.body.code !== '000000') {
           this.message = data.body.message
           this.binding = true
         } else {
-          var url = '/org/coupon/coupon/bind/online?userId=' + that.userId + '&yhqId=373'
-          that.$http.get(url).then(function (data) {
-            that.coupon = false
-            that.phone = true
-            console.log(data)
-          }, function () {
-            this.message = '获取数据失败'
-          })
+          this.getCoupon()
         }
       }, function () {
-        this.message = '获取数据失败'
+        Toast('获取数据失败')
       })
     },
     // 判断手机号
@@ -152,15 +211,14 @@ export default {
             sharePar.time = true
           }
         }, 1000)
-        var url = '/org/coupon/vacode/send?phone=' + this.phoneValue + '&channel=1001'
+        var url = this.urlPrefix + '/org/coupon/vacode/send?phone=' + this.phoneValue + '&channel=1001'
         this.$http.get(url).then(function (data) {
-          console.log(data)
           if (data.body.code !== '000000') {
             this.message = data.body.message
             this.binding = true
           }
         }, function () {
-          this.message = '获取数据失败'
+          Toast('获取数据失败')
         })
       }
     },
@@ -177,29 +235,34 @@ export default {
     },
 //  校验openId是否绑定手机号
     getCode: function () {
-      var that = this
       var code = util.getUrlParam(location.href, 'code')
-      var url = '/org/coupon/user/checkandregister?code=' + code + '&channelNo=1000001'
+      var url = this.urlPrefix + '/org/coupon/user/checkandregister?code=' + code + '&channelNo=1000001'
       this.$http.get(url).then(function (data) {
         console.log(data)
         console.log(data.body.result.bindStatus)
-        that.openId = data.body.result.openId
-        that.userId = data.body.result.userId
+        this.openId = data.body.result.openId
+        this.userId = data.body.result.userId
         if (data.body.result.bindStatus) {
-          var url = '/org/coupon/coupon/bind/online?userId=' + that.userId + '&yhqId=373'
-          that.$http.get(url).then(function (data) {
-            that.coupon = true
-            that.phone = false
-            console.log(data)
-          }, function () {
-            this.message = '获取数据失败'
-          })
+          this.getCoupon()
         } else {
           this.phone = true
           this.coupon = false
         }
       }, function () {
-        this.message = '获取数据失败'
+        Toast('获取数据失败')
+      })
+    },
+//  领取优惠券
+    getCoupon: function () {
+      var url = this.urlPrefix + '/org/coupon/coupon/bind/online?userId=' + this.userId + '&yhqId=373'
+      this.$http.get(url).then(function (data) {
+        if (data.body.code !== '000000') {
+          Toast(data.body.message)
+        }
+        this.coupon = true
+        this.phone = false
+      }, function () {
+        Toast('获取数据失败')
       })
     }
   }
@@ -207,7 +270,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  #share {
+  #receive {
     width: 100%;
     /*手机号页面*/
     .phone-bg {
@@ -345,12 +408,64 @@ export default {
       background-size: 100% 100%;
       background-color: transparent;
     }
+    /*活动介绍样式*/
     .activity {
       width: 100%;
       margin-top: 0.32rem;
     }
-    .activity img {
-      width: 100%;
+    .activity .activityTime {
+      height: 0.64rem;
+      width: 2.82rem;
+      margin: 0 auto;
+      background: url(../../assets/imgs/promotions/share/share0705/chickrule.png) no-repeat;
+      background-size: 100% 100%;
+      background-color: transparent;
+      text-align: center;
+      line-height: 0.64rem;
+      color: #660000;
+    }
+    .activity .activityRule {
+      height: 0.64rem;
+      width: 2.82rem;
+      margin: 0.32rem auto 0;
+      background: url(../../assets/imgs/promotions/share/share0705/chickrule.png) no-repeat;
+      background-size: 100% 100%;
+      background-color: transparent;
+      text-align: center;
+      line-height: 0.64rem;
+      color: #660000;
+    }
+    .activity .activeMessage {
+      padding-left: 0.96rem;
+      text-align: left;
+      margin-top: 0.28rem;
+      line-height: 0.32rem;
+    } 
+    .activity .activeMessage span{
+      display: inline-block;
+    }
+    .activity .activeMessage span.num{
+      width: 0.34rem;
+      height: 0.34rem;
+      line-height: 0.32rem;
+      border-radius: 0.16rem;
+      border: 1px solid #ffad14;
+      background-color: #ffe749;
+      color: #660000;
+      font-size: 0.2rem;
+      text-align: center;
+    }
+    .activity .activeMessage span.cont{
+      height: 0.32rem;
+      line-height: 0.32rem;
+      font-size: 0.28rem;
+      color: #fff;
+    }
+    .activity .bottomMessage {
+      margin-top: 0.5rem;
+      font-size: 0.18rem;
+      color: #660000;
+      text-align: center;
     }
   }
 </style>

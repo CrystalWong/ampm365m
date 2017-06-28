@@ -1,5 +1,5 @@
 <template>
-  <div id="receive">
+  <div id="share">
     <!--领取礼物-->
     <div class="share-bg bg">
       <div class="receive" @click="btnClick">
@@ -45,7 +45,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  #receive {
+  #share {
     width: 100%;
     position: relative;
     /*领取页面*/
