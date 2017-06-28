@@ -63,12 +63,6 @@
             <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
           </div>
         </div> 
-        <!-- <div class='giveMe' v-if="clickAble">
-          <div>
-            <span>是我的，快给我</span>
-            <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
-          </div>
-        </div>    -->
       </mu-dialog>
     </div>
     <!--dialog end -->
@@ -85,8 +79,7 @@
         <span>关注该，直接买</span>
       </div>
       <div >
-        <!-- <span><router-link to="/">去买买买</router-link></span> -->
-        <span >去买买买</span>
+         <span><router-link to="/" style='color:#000 !important'>去买买买</router-link></span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
@@ -228,7 +221,7 @@ export default {
         }
       })
     },
-    //绑定手机
+    // 绑定手机
     bindMobile: function () {
       var _t = this
       var params = {
@@ -241,8 +234,11 @@ export default {
       service.bindMobile(params, function (res) {
         if (res.code === '000000') {
           _t.isShow = false
+          _t.close()
+          _t.getCoupon()
         } else {
-          Toast(res.message)
+          // Toast(res.message)
+          _t.message = res.message
         }
         _t.clickAble = true
       })
@@ -341,12 +337,12 @@ export default {
       })
       _t.applyWeChat()
     }, 
-    shareInit: function() {
+    shareInitReceivecoupons: function() {
       wx.onMenuShareAppMessage({
-        title: '【关东煮免费吃】', // 分享标题
-        desc: '全时便利店周年庆，进店即可领取关东煮一份', // 分享描述
+        title: '【全时便利店-送你10块钱】', // 分享标题
+        desc: '微信商城+门店共同发力，狂欢7天，今天就能用哦.', // 分享描述
         link: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Fpromotion%2F%23%2FReceivecoupons&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect', // 分享链接
-        imgUrl: 'http://wechat.ampm365.cn/promotion/static/top2.png', // 分享图标
+        imgUrl: 'http://wechat.ampm365.cn/test/promotion/static/celebration.png', // 分享图标
         type: '', // 分享类型,music、video或link，不填默认为link
         dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
         success: function() {
@@ -360,7 +356,7 @@ export default {
     applyWeChat: function() {
       var _t = this;
       wx.ready(function() {
-        _t.shareInit();
+        _t.shareInitReceivecoupons();
       });
       wx.error(function(res) {});
     }
@@ -371,6 +367,8 @@ export default {
 
 <style lang="less" scoped>
 	#receiveCoupons{
+    background: url(/test/promotion/static/img/interface.7a50d55.png);
+    background-size:100% 100%;
     position: relative;
     .mineBottom{
       position: absolute;
@@ -509,6 +507,8 @@ export default {
 }
 #getgift{
     position: relative;
+    background: url(/test/promotion/static/img/interface.7a50d55.png);
+    background-size:100% 100%;
     .mineBottom{
       position: absolute;
       top: 10.85rem;
