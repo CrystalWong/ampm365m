@@ -179,7 +179,6 @@ export default {
     getCode: function () {
       var that = this
       var code = util.getUrlParam(location.href, 'code')
-      console.log(code)
       var url = '/org/coupon/user/checkandregister?code=' + code + '&channelNo=1000001'
       this.$http.get(url).then(function (data) {
         console.log(data)
@@ -187,17 +186,17 @@ export default {
         that.openId = data.body.result.openId
         that.userId = data.body.result.userId
         if (data.body.result.bindStatus) {
-          this.phone = false
-          this.coupon = true
-        } else {
           var url = '/org/coupon/coupon/bind/online?userId=' + that.userId + '&yhqId=373'
           that.$http.get(url).then(function (data) {
-            that.coupon = false
-            that.phone = true
+            that.coupon = true
+            that.phone = false
             console.log(data)
           }, function () {
             this.message = '获取数据失败'
           })
+        } else {
+          this.phone = true
+          this.coupon = false
         }
       }, function () {
         this.message = '获取数据失败'
