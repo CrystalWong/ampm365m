@@ -4,7 +4,7 @@
     <div class="share-bg bg">
       <div class="receive" @click="btnClick">
         <div class="txt">
-                      有心啦，我领~
+                          有心啦，我领~
         </div>
       </div>
       <div class="unclock">
@@ -25,11 +25,18 @@
 </template>
 
 <script>
+import service from '@/service'
+import API from '@/service/api'
+import { Toast } from 'mint-ui'
+let api = new API()
 export default {
   data () {
     return {
       mask: false
     }
+  },
+  created () {
+    this.getOAuth2sdk()
   },
   methods: {
 // 领取按钮
@@ -40,6 +47,68 @@ export default {
     maskClose: function () {
       this.mask = false
     },
+//  朋友圈/好友分享
+    getOAuth2sdk: function () {
+      var that = this
+      var params = {
+        'channelNo': '1000001',
+        'type': 'jsapi',
+        'url': encodeURIComponent(window.location.href)
+      }
+      service.OAuth2sdk(params, function (res) {
+        if (res.code === '000000') {
+           that.setwxConfig(res.result)
+        }
+      })
+    },
+    setwxConfig: function (res) {
+      var that = this
+      console.log(res)
+      wx.config({
+        debug: false,
+        appId: res.appid,
+        timestamp: res.timestamp,
+        nonceStr: res.nonceStr,
+        signature: res.signature,
+        jsApiList: ['onMenuShareAppMessage','onMenuShareTimeline']
+      })
+      that.applyWeChat()
+    }, 
+    shareInitReceivecoupons: function() {
+      wx.onMenuShareAppMessage({
+        title:'给你一份爱，不知敢接否？', // 分享标题
+        desc:'请珍惜每一个愿意分享给你东东的小可爱——全时', // 分享描述
+        link:'http://wechat.ampm365.cn/test/promotion/#/transfer', // 分享链接
+        imgUrl:'http://wechat.ampm365.cn/test/promotion/static/celebration.png', // 分享图标
+        type:'', // 分享类型,music、video或link，不填默认为link
+        dataUrl:'', // 如果type是music或video，则要提供数据链接，默认为空
+        success: function() {
+          Toast('分享成功！')
+        },
+        cancel: function() {
+          Toast('分享失败！')
+        }
+      }),
+      wx.onMenuShareTimeline({
+        title:'给你一份爱，不知敢接否？', // 分享标题
+        link:'http://wechat.ampm365.cn/test/promotion/#/transfer', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        imgUrl:'http://wechat.ampm365.cn/test/promotion/static/celebration.png', // 分享图标
+        success: function () {
+          Toast('分享成功！')
+        },
+        cancel: function () {
+          Toast('分享失败！')
+        }
+      });
+    },
+    applyWeChat: function() {
+      var that = this;
+      wx.ready(function() {
+        that.shareInitReceivecoupons();
+      });
+      wx.error(function(res) {});
+    }
+    // applyWeChat end
   }
 }
 </script>
@@ -102,7 +171,7 @@ export default {
       color: #fff;
     }
     .mask {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;

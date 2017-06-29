@@ -8,6 +8,7 @@ import ActivityEnd from '@/components/promotions/ActivityEnd'
 import SpreadActive from '@/components/promotions/SpreadActive'
 import Share from '@/components/promotions/Share'
 import Receivesucc from '@/components/promotions/Receivesucc'
+import Transfer from '@/components/promotions/Transfer'
 
 Vue.use(Router)
 
@@ -55,6 +56,13 @@ export default new Router({
     name: 'share',
     components: {
       default: Share
+    }
+  },
+  {
+    path: '/transfer',
+    name: 'transfer',
+    components: {
+      default: Transfer
     }
   },
   {

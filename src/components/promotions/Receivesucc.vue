@@ -115,9 +115,9 @@ export default {
     return {
       coupon: false,
       phone: false,
-//    判断手机号有没有绑定提示信息
+//    判断手机号有没有绑定,提示信息
       binding: false,
-//    判断是不是手机号提示信息
+//    判断是不是手机号,提示信息
       truePhone: false,
 //    获取验证码能否点击
       judge: false,
@@ -133,31 +133,38 @@ export default {
       message: '',
       openId: '',
       urlPrefix: location.href.indexOf('test') > 0 ? '/test' : '',
-      userId: ''
+      userId: '',
+//    点击确认键时,防止多次点击
+      bool: true
     }
   },
   created () {
-    this.getCode()
+    this.checkOnline()
   },
   methods: {
     //  购买按钮
     buyClick: function () {
-      alert(1)
+      window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
     },
     // 确认按钮
     confirmClick: function () {
-      var that = this
-      var url = this.urlPrefix + '/org/coupon/user/bind?userId=' + this.userId + '&phone=' + this.phoneValue + '&vacode=' + this.inCaptcha
-      this.$http.get(url).then(function (data) {
-        if (data.body.code !== '000000') {
-          this.message = data.body.message
-          this.binding = true
-        } else {
-          this.getCoupon()
-        }
-      }, function () {
-        Toast('获取数据失败')
-      })
+      if (this.bool) {
+        this.bool = false
+        var url = this.urlPrefix + '/org/coupon/user/bind?userId=' + this.userId + '&phone=' + this.phoneValue + '&vacode=' + this.inCaptcha
+        this.$http.get(url).then(function (data) {
+          if (data.body.code !== '000000') {
+            this.message = data.body.message
+            this.binding = true
+            this.bool = true
+          } else {
+            this.getCoupon()
+            this.bool = true
+          }
+        }, function () {
+          Toast('获取数据失败')
+          this.bool = true
+        })
+      }
     },
     // 判断手机号
     checkPhone: function () {
@@ -233,13 +240,33 @@ export default {
         this.grayConfirm = true
       }
     },
+    // 判断活动是否存在
+    checkOnline: function () {
+      var url = this.urlPrefix + '/org/coupon/available/check/online?yhqId=373'
+      this.$http.get(url).then(function (data) {
+        console.log(data)
+        if (data.body.code === '000000') {
+          if (data.body.result.available === false) {
+            if (this.urlPrefix === '/test') {
+              location.href = 'http://wechat.ampm365.cn/test/promotion/#/activityend'
+            } else {
+              location.href = 'http://wechat.ampm365.cn/promotion/#/activityend'
+            }
+          } else {
+            this.getCode()
+          }
+        } else {
+          Toast(data.body.message)
+        }
+      }, function () {
+        Toast('获取数据失败')
+      })
+    },
 //  校验openId是否绑定手机号
     getCode: function () {
       var code = util.getUrlParam(location.href, 'code')
       var url = this.urlPrefix + '/org/coupon/user/checkandregister?code=' + code + '&channelNo=1000001'
       this.$http.get(url).then(function (data) {
-        console.log(data)
-        console.log(data.body.result.bindStatus)
         this.openId = data.body.result.openId
         this.userId = data.body.result.userId
         if (data.body.result.bindStatus) {
@@ -247,6 +274,7 @@ export default {
         } else {
           this.phone = true
           this.coupon = false
+          Toast(data.body.message)
         }
       }, function () {
         Toast('获取数据失败')
@@ -254,6 +282,7 @@ export default {
     },
 //  领取优惠券
     getCoupon: function () {
+      console.log(this.userId)
       var url = this.urlPrefix + '/org/coupon/coupon/bind/online?userId=' + this.userId + '&yhqId=373'
       this.$http.get(url).then(function (data) {
         if (data.body.code !== '000000') {
@@ -445,8 +474,8 @@ export default {
       display: inline-block;
     }
     .activity .activeMessage span.num{
-      width: 0.34rem;
-      height: 0.34rem;
+      width: 0.32rem;
+      height: 0.32rem;
       line-height: 0.32rem;
       border-radius: 0.16rem;
       border: 1px solid #ffad14;
