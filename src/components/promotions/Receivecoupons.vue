@@ -52,8 +52,8 @@
     <div id="dialog" >
       <mu-dialog :open="dialog" title="" @close="close">
         <img src="../../assets/imgs/promotions/coupons/coupon0701/framebackg.png" width="100%">
-        <input type="text" placeholder="输入手机号" class="inputPhone" v-model='phoneNum'>
-        <input type="text" placeholder="输入验证码" class="inputCode" v-model.trim="captcha" maxlength="6">
+        <input type="tel" placeholder="输入手机号" class="inputPhone" v-model='phoneNum'>
+        <input type="number" placeholder="输入验证码" class="inputCode" v-model.trim="captcha" maxlength="6">
         <button type='button' @click="getCaptcha" v-if="timerFlag">{{ "获取验证码" }}</button>
         <button type='button' v-if="!timerFlag">{{ captchaDisable }}S后重发</button>
         <div v-show="message"  class="notice">{{message}}</div>
@@ -79,7 +79,7 @@
         <span>关注该，直接买</span>
       </div>
       <div >
-         <span><router-link to="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/test/index.html&response_type=code&scope=snsapi_userinfo&state=STATE" style='color:#000 !important'>去买买买</router-link></span>
+         <span><a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/test/index.html&response_type=code&scope=snsapi_userinfo&state=STATE" style='color:#000 !important'>去买买买</a></span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
@@ -263,6 +263,7 @@ export default {
           _t.isShow = false 
         } else {
           Toast(res.message)
+          setTimeout("location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/test/index.html&response_type=code&scope=snsapi_userinfo&state=STATE'",2000);
         }
       })
     },
