@@ -4,7 +4,6 @@
     <img src="../../assets/imgs/promotions/coupons/coupon0701/interface.png" width="100%">
     <div class="mineBottom">
       <div >
-        <!-- <span><router-link to="/Getgifts">当然是我哒</router-link></span> -->
         <span @click="CheckCoupon">当然是我哒</span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
@@ -79,7 +78,7 @@
         <span>关注该，直接买</span>
       </div>
       <div >
-         <span><a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/test/index.html&response_type=code&scope=snsapi_userinfo&state=STATE" style='color:#000 !important'>去买买买</a></span>
+         <span><a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect" style='color:#000 !important'>去买买买</a></span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
       </div>  
     </div>
@@ -202,7 +201,7 @@ export default {
     checkOnline () { // 判断
       var _t = this
       var params = {
-        'yhqId': 371
+        'yhqId': 219
       }
       return api.get(_t.urlPrefix + '/org/coupon/available/check/online', params, function (res) {
         if (res.code === '000000') {
@@ -263,7 +262,7 @@ export default {
           _t.isShow = false 
         } else {
           Toast(res.message)
-          setTimeout("location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/test/index.html&response_type=code&scope=snsapi_userinfo&state=STATE'",2000);
+          setTimeout("location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'",2000);
         }
       })
     },
