@@ -115,7 +115,7 @@ export default {
     return {
       coupon: false,
       phone: false,
-//    判断手机号有没有绑定,提示信息
+//    判断手机号有没有绑定, 提示信息
       binding: false,
 //    判断是不是手机号,提示信息
       truePhone: false,
