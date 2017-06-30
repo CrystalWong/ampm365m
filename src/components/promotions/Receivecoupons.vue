@@ -201,7 +201,7 @@ export default {
     checkOnline () { // 判断
       var _t = this
       var params = {
-        'yhqId': 219
+        'yhqId': 192
       }
       return api.get(_t.urlPrefix + '/org/coupon/available/check/online', params, function (res) {
         if (res.code === '000000') {
