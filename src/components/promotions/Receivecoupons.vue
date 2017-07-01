@@ -230,17 +230,23 @@ export default {
         'openId': _t.openId
       }
       _t.clickAble = false
-      service.bindMobile(params, function (res) {
-        if (res.code === '000000') {
-          _t.isShow = false
-          _t.close()
-          _t.getCoupon()
-        } else {
-          // Toast(res.message)
-          _t.message = res.message
-        }
-        _t.clickAble = true
-      })
+      if(_t.phoneNum == ''){
+        _t.message = '请先输入手机号'
+      } else if (_t.captcha) {
+        _t.message = '请先输入验证码'
+      } else {
+        service.bindMobile(params, function (res) {
+          if (res.code === '000000') {
+            _t.isShow = false
+            _t.close()
+            _t.getCoupon()
+          } else {
+            // Toast(res.message)
+            _t.message = res.message
+          }
+          _t.clickAble = true
+        })
+      }
     },
     CheckCoupon: function () {
       var _t = this
@@ -255,14 +261,16 @@ export default {
       var _t = this
       var params = {
         'userId': _t.userId,
-        'yhqId': 371
+        'yhqId': 192
       }
       return api.get(_t.urlPrefix + '/org/coupon/coupon/bind/online', params, function (res) {
         if (res.code === '000000') {
           _t.isShow = false 
         } else {
-          Toast(res.message)
-          setTimeout("location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'",2000);
+          //Toast(res.message)
+          // setTimeout("location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'",2000);
+          _t.isShow = false 
+          // Toast(res.message)
         }
       })
     },
@@ -280,6 +288,8 @@ export default {
             _t.timerFlag = false
              _t.message = '验证码已成功发送，请注意查收～'
             _t.timer()
+          } else if (res.code === '333333') {
+            _t.message = '您的手机号已经绑定过，请刷新页面重试'
           } else {
             _t.timerFlag = true
             _t.message = res.message
@@ -301,6 +311,7 @@ export default {
           _t.openId = res.result.openId
           _t.userId = res.result.userId
           _t.bindStatus = res.result.bindStatus
+          console.log(' _t.bindStatus is : ' + _t.bindStatus)
         } else {
           if (_t.urlPrefix === '/test') {
             location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Ftest%2Fpromotion%2F%23%2FReceivecoupons&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
