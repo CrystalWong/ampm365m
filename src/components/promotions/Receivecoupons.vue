@@ -78,8 +78,10 @@
         <span>关注该，直接买</span>
       </div>
       <div >
-         <span><a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect" style='color:#000 !important'>去买买买</a></span>
+        <a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect" style='color:#000 !important'>
+         <span>去买买买</span>
         <img src="../../assets/imgs/promotions/coupons/coupon0701/thrinput.png">
+        </a>
       </div>  
     </div>
     <div class="activeTime">
@@ -155,7 +157,9 @@ export default {
       'captcha': '',
       'urlPrefix': location.href.indexOf('test') > 0 ? '/test' : '',
       'clickAble': true,
-      'bindStatus': null
+      'bindStatus': '',
+      'getcode': '',
+      'codeValue': ''
     }
   },
   watch: {
@@ -232,7 +236,7 @@ export default {
       _t.clickAble = false
       if(_t.phoneNum == ''){
         _t.message = '请先输入手机号'
-      } else if (_t.captcha) {
+      } else if (_t.captcha == '') {
         _t.message = '请先输入验证码'
       } else {
         service.bindMobile(params, function (res) {
@@ -250,10 +254,14 @@ export default {
     },
     CheckCoupon: function () {
       var _t = this
-      if (_t.bindStatus) {
-        _t.getCoupon()
+      if (_t.codeValue == '000000') {
+        if (_t.bindStatus) {
+          _t.getCoupon()
+        } else {
+          _t.open()
+        }
       } else {
-        _t.open()
+        
       }
     },
     // 优惠券领取
@@ -266,8 +274,8 @@ export default {
       return api.get(_t.urlPrefix + '/org/coupon/coupon/bind/online', params, function (res) {
         if (res.code === '000000') {
           _t.isShow = false 
-        } else {
-          //Toast(res.message)
+        } else if (res.code === '222222') {
+          // Toast(res.message)
           // setTimeout("location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http://wechat.ampm365.cn/assets/appIndex.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'",2000);
           _t.isShow = false 
           // Toast(res.message)
@@ -311,7 +319,9 @@ export default {
           _t.openId = res.result.openId
           _t.userId = res.result.userId
           _t.bindStatus = res.result.bindStatus
-          console.log(' _t.bindStatus is : ' + _t.bindStatus)
+          _t.codeValue = res.code
+          // console.log(' _t.bindStatus is : ' + _t.bindStatus)
+          // console.log(' _t.bindStatus is : ' + _t.urlPrefix)
         } else {
           if (_t.urlPrefix === '/test') {
             location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Ftest%2Fpromotion%2F%23%2FReceivecoupons&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
