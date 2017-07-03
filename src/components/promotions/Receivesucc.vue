@@ -51,9 +51,9 @@
   
     <!--手机号页面-->
     <div class="phone-bg bg" v-show="phone">
-      <input type="text" id="phone" class="phone-txt" name="phone" placeholder='输入手机号' @blur="checkPhone" @input="ckPhone"/>
+      <input type="tel" id="phone" class="phone-txt" name="phone" placeholder='输入手机号' v-model.trim="phoneValue" @blur="checkPhone" @input="ckPhone" maxlength="11"/>
       <div class="verification">
-        <input type="text" name="captcha" placeholder='输入验证码' class="fl inputCaptcha" @input="inputCaptcha"/>
+        <input type="text" name="captcha" placeholder='输入验证码' class="fl inputCaptcha" v-model.trim="inCaptcha" @input="inputCaptcha" maxlength="6"/>
         <div class="fr getCaptcha captcha" @click="getCaptcha" v-show='time'>获取验证码</div>
         <div class="fr countDown captcha" v-bind:hidden="time">60 s</div>
       </div>
@@ -150,7 +150,7 @@ export default {
     confirmClick: function () {
       if (this.bool) {
         this.bool = false
-        var url = this.urlPrefix + '/org/coupon/user/bind?userId=' + this.userId + '&phone=' + this.phoneValue + '&vacode=' + this.inCaptcha
+        var url = this.urlPrefix + '/org/coupon/user/bind?openId=' + this.openId + '&userId=' + this.userId + '&phone=' + this.phoneValue + '&vacode=' + this.inCaptcha
         this.$http.get(url).then(function (data) {
           if (data.body.code !== '000000') {
             this.message = data.body.message
@@ -168,30 +168,27 @@ export default {
     },
     // 判断手机号
     checkPhone: function () {
-      var phone = document.getElementById('phone')
-      this.phoneValue = phone.value
-      if (!(/^1[34578]\d{9}$/.test(phone.value))) {
+      if (!(/^1[34578]\d{9}$/.test(this.phoneValue))) {
         this.truePhone = true
       } else {
         this.truePhone = false
         this.judge = true
       }
-      if (phone.value.length === 0) {
+      if (this.phoneValue.length === 0) {
         this.truePhone = false
       }
     },
 //  检测手机号Input每次输入/删除,将错误信息清除
     ckPhone: function () {
       this.binding = false
-      var phone = document.getElementById('phone')
 //    当手机号删除完后,清除提示  并且确认键至灰
-      if (phone.value.length === 0) {
+      if (this.phoneValue.length === 0) {
         this.truePhone = false
         this.grayConfirm = true
         this.judge = false
       }
 //    如果手机号符合要求,清除提示
-      if ((/^1[34578]\d{9}$/.test(phone.value))) {
+      if ((/^1[34578]\d{9}$/.test(this.phoneValue))) {
         this.truePhone = false
         this.judge = true
 //    如果两个输入框都有值,确认键可点击
@@ -231,8 +228,6 @@ export default {
     },
 //  输入验证码
     inputCaptcha: function () {
-      var inputCaptcha = document.getElementsByClassName('inputCaptcha')[0]
-      this.inCaptcha = inputCaptcha.value
 //    如果两个输入框都有值,确认键可点击
       if (this.judge && this.inCaptcha) {
         this.grayConfirm = false
@@ -242,9 +237,8 @@ export default {
     },
     // 判断活动是否存在
     checkOnline: function () {
-      var url = this.urlPrefix + '/org/coupon/available/check/online?yhqId=373'
+      var url = this.urlPrefix + '/org/coupon/available/check/online?yhqId=193'
       this.$http.get(url).then(function (data) {
-        console.log(data)
         if (data.body.code === '000000') {
           if (data.body.result.available === false) {
             if (this.urlPrefix === '/test') {
@@ -264,32 +258,42 @@ export default {
     },
 //  校验openId是否绑定手机号
     getCode: function () {
+      var that = this
       var code = util.getUrlParam(location.href, 'code')
       var url = this.urlPrefix + '/org/coupon/user/checkandregister?code=' + code + '&channelNo=1000001'
       this.$http.get(url).then(function (data) {
         this.openId = data.body.result.openId
         this.userId = data.body.result.userId
-        if (data.body.result.bindStatus) {
-          this.getCoupon()
+        if (data.body.code === '000000') {
+          if (data.body.result.bindStatus) {
+            this.getCoupon()
+          } else {
+            this.phone = true
+            this.coupon = false
+            document.title = '领取赠品'
+          }
         } else {
-          this.phone = true
-          this.coupon = false
-          Toast(data.body.message)
+          if (that.urlPrefix === '/test') {
+            location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Ftest%2Fpromotion%2F%23%2Freceivesucc&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          } else {
+            location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaafaca10ec60eac6&redirect_uri=http%3A%2F%2Fwechat.ampm365.cn%2Fpromotion%2F%23%2Freceivesucc&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+          }
         }
+        
       }, function () {
         Toast('获取数据失败')
       })
     },
 //  领取优惠券
     getCoupon: function () {
-      console.log(this.userId)
-      var url = this.urlPrefix + '/org/coupon/coupon/bind/online?userId=' + this.userId + '&yhqId=373'
+      var url = this.urlPrefix + '/org/coupon/coupon/bind/online?userId=' + this.userId + '&yhqId=193'
       this.$http.get(url).then(function (data) {
         if (data.body.code !== '000000') {
           Toast(data.body.message)
         }
         this.coupon = true
         this.phone = false
+        document.title = '领取优惠券'
       }, function () {
         Toast('获取数据失败')
       })

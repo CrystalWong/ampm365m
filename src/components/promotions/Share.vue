@@ -1,12 +1,12 @@
 <template>
-  <div id="share">
+  <div id="share" v-show='share'>
     <!--领取礼物-->
     <div class="share-bg bg">
       <div class="receive" @click="btnClick">
         <div class="txt">
                           有心啦，我领~
         </div>
-      </div>
+      </div> 
       <div class="unclock">
         <img src="../../assets/imgs/promotions/share/share0705/unclock.png"/>
       </div>
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="boot">
-                分享完成后点击链接领取
+                     分享完成后点击链接领取
     </div>
     <div class="mask" v-show="mask" @click='maskClose'>
       <img src="../../assets/imgs/promotions/share/share0705/backoh.png" alt="" />
@@ -32,10 +32,14 @@ let api = new API()
 export default {
   data () {
     return {
-      mask: false
+      mask: false,
+      urlPrefix: location.href.indexOf('test') > 0 ? '/test' : '',
+      share: false
     }
   },
   created () {
+    document.title = '领取优惠券'
+    this.checkOnline()
     this.getOAuth2sdk()
   },
   methods: {
@@ -46,6 +50,27 @@ export default {
     // 遮罩层
     maskClose: function () {
       this.mask = false
+    },
+//  判断活动有无
+    checkOnline: function () {
+      var url = this.urlPrefix + '/org/coupon/available/check/online?yhqId=193'
+      this.$http.get(url).then(function (data) {
+        if (data.body.code === '000000') {
+          if (data.body.result.available === false) {
+            if (this.urlPrefix === '/test') {
+              location.href = 'http://wechat.ampm365.cn/test/promotion/#/activityend'
+            } else {
+              location.href = 'http://wechat.ampm365.cn/promotion/#/activityend'
+            }
+          } else {
+            this.share = true
+          }
+        } else {
+          Toast(data.body.message)
+        }
+      }, function () {
+        Toast('获取数据失败')
+      })
     },
 //  朋友圈/好友分享
     getOAuth2sdk: function () {
@@ -78,8 +103,8 @@ export default {
       wx.onMenuShareAppMessage({
         title:'给你一份爱，不知敢接否？', // 分享标题
         desc:'请珍惜每一个愿意分享给你东东的小可爱——全时', // 分享描述
-        link:'http://wechat.ampm365.cn/test/promotion/#/transfer', // 分享链接
-        imgUrl:'http://wechat.ampm365.cn/test/promotion/static/celebration.png', // 分享图标
+        link:'http://wechat.ampm365.cn/promotion/#/transfer', // 分享链接
+        imgUrl:'http://wechat.ampm365.cn/promotion/static/shareIcon.jpg', // 分享图标
         type:'', // 分享类型,music、video或link，不填默认为link
         dataUrl:'', // 如果type是music或video，则要提供数据链接，默认为空
         success: function() {
@@ -91,8 +116,8 @@ export default {
       }),
       wx.onMenuShareTimeline({
         title:'给你一份爱，不知敢接否？', // 分享标题
-        link:'http://wechat.ampm365.cn/test/promotion/#/transfer', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-        imgUrl:'http://wechat.ampm365.cn/test/promotion/static/celebration.png', // 分享图标
+        link:'http://wechat.ampm365.cn/promotion/#/transfer', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        imgUrl:'http://wechat.ampm365.cn/promotion/static/shareIcon.jpg', // 分享图标
         success: function () {
           Toast('分享成功！')
         },
